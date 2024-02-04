@@ -13,10 +13,15 @@ export const Operation = (props) => {
     props.onWithdrawal(withdrawalAmount)
   }
 
+  function onGetTransactions() {
+    props.onGetTransactions()
+  }
+
   return(
     <>
       <div className='operation-wrap'>
         <Flex className='operation-item' vertical gap={10}>
+        <Button type="primary" onClick={onGetTransactions}>Refresh</Button>
           <div>Make a deposit</div>
           <InputNumber
             className='input-number'
