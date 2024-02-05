@@ -1,7 +1,7 @@
 
 import { Table, Tag, Card } from 'antd';
 
-export const RecordList = (props, account) => {
+export const RecordList = (props) => {
   const columns = [
     {
       title: 'Type',
@@ -30,12 +30,10 @@ export const RecordList = (props, account) => {
     }
   ];
 
-  return(
+  return (
     <>
       <div className='table-wrap'>
-      <Card width={1000} title={"Name: "+ account.nickname} extra={"Balance: $"+account.balance}>
         <Table columns={columns} dataSource={props.data} />
-        </Card>
       </div>
     </>
   )
