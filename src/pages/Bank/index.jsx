@@ -19,69 +19,37 @@ export const Bank = (props) => {
 	let [recordListData, setRecordListData] = useState([]);
 
 	// URLs for HTTP requests
-	const accountUrl = BASE_URL + '/accounts/' + ACCOUNT_ID + '?key=' + API_KEY;
-	const depositsUrl = BASE_URL + '/accounts/' + ACCOUNT_ID + '/deposits?key=' + API_KEY;
-	const withdrawalsUrl = BASE_URL + '/accounts/' + ACCOUNT_ID + '/withdrawals?key=' + API_KEY;
+	
+	/// { TODO } ///
+	const accountUrl = "";
+	const depositsUrl = "";
+	const withdrawalsUrl = "";
 
 	// Sends POST request to CapitalOne API with the given URL and amount
 	// Supports both withdrawals and deposits since the request body is the same format for both
 	function httpPostTransaction(url, amount) {
-		axios
-			.post(url, {
-				medium: 'balance',
-				transaction_date: new Date().toLocaleString(),
-				amount: amount,
-			})
-
-			.then((response) => {
-				// If operation was successful, refresh table data
-				operationSuccessful(response.data.message);
-				onGetTransactions(); })
-				
-			.catch((err) => { operationFailed(err.message); });
+		/// { TODO } ///
 	}
 
 	// Called when the deposit button is clicked (POST deposit HTTP request)
 	function onPostDeposit(amount) {
-		httpPostTransaction(depositsUrl, amount);
+		/// { TODO } ///
 	}
 
 	// Called when the withdrawal button is clicked (POST withdrawal HTTP request)
 	function onPostWithdrawal(amount) {
-		if (balance >= amount)
-			httpPostTransaction(withdrawalsUrl, amount);
-		else
-			operationFailed("Insufficient funds");
+		/// { TODO } ///
 	}
 
 	// Sends GET request to CapitonOne API with the given URL
 	// Returns the response body
 	async function httpGetTransaction(url) {
-		return await axios.get(url)
-			.then((response) => { return response.data; })
-			.catch((err) => { operationFailed(err.message); });
+		/// { TODO } ///
 	}
 
 	// Called when refresh button is clicked and after a new deposit or withdrawal is added
 	async function onGetTransactions() {
-
-		// GET account data to retrieve name + balance
-		let accountData = await httpGetTransaction(accountUrl);
-
-		// GET deposits for account
-		let deposits = await httpGetTransaction(depositsUrl);
-
-		// GET withdrawals for account
-		let withdrawals = await httpGetTransaction(withdrawalsUrl);
-
-		// Combine deposits + withdrawals into one array and sort by date
-		let transactions = deposits.concat(...withdrawals);
-		transactions.sort((a, b) => compareDates(a, b));
-
-		// Update the information displayed in our table
-		setBalance(accountData.balance);
-		setAccountNickname(accountData.nickname);
-		setRecordListData(transactions);
+		/// { TODO } ///
 	}
 
 	// Helper function: Sort transactions by date
