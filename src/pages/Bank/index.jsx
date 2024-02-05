@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, message, Card } from 'antd';
-
 import { RecordList } from '../RecordList';
 import { Operation } from '../Operation';
 
@@ -24,23 +23,46 @@ export const Bank = (props) => {
 	const depositsUrl = BASE_URL + '/accounts/' + ACCOUNT_ID + '/deposits?key=' + API_KEY;
 	const withdrawalsUrl = BASE_URL + '/accounts/' + ACCOUNT_ID + '/withdrawals?key=' + API_KEY;
 
-	// Called when the deposit button is pressed:
-	// POST deposit HTTP request
-	function onDeposit(amount) {
+	// Sends POST request to CapitalOne API with the given URL and amount
+	// Supports both withdrawals and deposits since the request body is the same format for both
+	function httpPostTransaction(url, amount) {
+		axios
+			.post(url, {
+				medium: 'balance',
+				transaction_date: new Date().toLocaleString(),
+				amount: amount,
+			})
+
+			.then((response) => {
+				// If operation was successful, refresh table data
+				operationSuccessful(response.data.message);
+				onGetTransactions(); })
+				
+			.catch((err) => { operationFailed(err.message); });
+	}
+
+	// Called when the deposit button is clicked (POST deposit HTTP request)
+	function onPostDeposit(amount) {
 		httpPostTransaction(depositsUrl, amount);
 	}
 
-	// Called when the withdrawal button is pressed:
-	// POST withdrawal HTTP request
-	function onWithdrawal(amount) {
+	// Called when the withdrawal button is clicked (POST withdrawal HTTP request)
+	function onPostWithdrawal(amount) {
 		if (balance >= amount)
 			httpPostTransaction(withdrawalsUrl, amount);
 		else
 			operationFailed("Insufficient funds");
 	}
 
-	// Called when refresh button is clicked
-	// and after a new deposit or withdrawal is added
+	// Sends GET request to CapitonOne API with the given URL
+	// Returns the response body
+	async function httpGetTransaction(url) {
+		return await axios.get(url)
+			.then((response) => { return response.data; })
+			.catch((err) => { operationFailed(err.message); });
+	}
+
+	// Called when refresh button is clicked and after a new deposit or withdrawal is added
 	async function onGetTransactions() {
 
 		// GET account data to retrieve name + balance
@@ -60,33 +82,6 @@ export const Bank = (props) => {
 		setBalance(accountData.balance);
 		setAccountNickname(accountData.nickname);
 		setRecordListData(transactions);
-	}
-
-	// Sends POST request to CapitalOne API with the given URL and amount
-	// Supports both withdrawal and deposit endpoints since the request body is the same format for both
-	function httpPostTransaction(url, amount) {
-		axios
-			.post(url, {
-				medium: 'balance',
-				transaction_date: new Date().toLocaleString(),
-				amount: amount,
-			})
-			.then((response) => {
-				// If operation was successful, refresh table data
-				operationSuccessful(response.data.message);
-				onGetTransactions();
-			})
-			.catch((err) => {
-				operationFailed(err.message);
-			});
-	}
-
-	// Sends GET request to CapitonOne API with the given URL
-	// Returns the response body
-	async function httpGetTransaction(url) {
-		return await axios.get(url)
-			.then((response) => { return response.data; })
-			.catch((err) => { operationFailed(err.message); });
 	}
 
 	// Helper function: Sort transactions by date
@@ -119,8 +114,8 @@ export const Bank = (props) => {
 						<RecordList data={recordListData} />
 					</Card>
 					<Operation
-						onDeposit={onDeposit}
-						onWithdrawal={onWithdrawal}
+						onDeposit={onPostDeposit}
+						onWithdrawal={onPostWithdrawal}
 						onGetTransactions={onGetTransactions}
 					/>
 				</Flex>

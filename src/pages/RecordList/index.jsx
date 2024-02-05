@@ -1,5 +1,5 @@
 
-import { Table, Tag, Card } from 'antd';
+import { Table, Tag } from 'antd';
 
 export const RecordList = (props) => {
   const columns = [
