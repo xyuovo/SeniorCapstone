@@ -1,4 +1,3 @@
-
 import { Table, Tag } from 'antd';
 
 export const RecordList = (props) => {
